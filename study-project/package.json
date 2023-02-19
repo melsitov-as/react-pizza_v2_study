@@ -39,6 +39,7 @@
     ]
   },
   "devDependencies": {
-    "nanoid": "^4.0.1"
+    "nanoid": "^4.0.1",
+    "react-paginate": "^8.1.4"
   }
 }
