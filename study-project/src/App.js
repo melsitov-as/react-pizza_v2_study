@@ -1,4 +1,6 @@
 import React, { createContext, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { decrement, increment } from "./redux/slices/filterSlice";
 import "./scss/app.scss";
 
 import Header from "./components/Header";
@@ -12,12 +14,25 @@ export const SearchContext = createContext();
 
 function App() {
 	const [searchValue, setSearchValue] = useState("");
+	const count = useSelector((state) => state.counter.value);
+	const dispatch = useDispatch();
 
 	return (
 		<div className="wrapper">
-			{/* - Теперь о <SearchContext.Provider> будут знать те, кто в него вложен
-			- будем передавать в Provider объект, которые будет содержать значение  и функцию
-			- избавляемся от пропс-дриллинга*/}
+			<button
+				aria-label="Increment value"
+				onClick={() => dispatch(increment())}
+			>
+				Increment
+			</button>
+			<span>{count}</span>
+			<button
+				aria-label="Decrement value"
+				onClick={() => dispatch(decrement())}
+			>
+				Decrement
+			</button>
+
 			<SearchContext.Provider value={{ searchValue, setSearchValue }}>
 				<Header />
 				<div className="content">
