@@ -1,28 +1,28 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	// первое состояние нашего слайса
-	value: 0,
+	categoryId: 0,
+	sort: {
+		name: "популярности",
+		sortProperty: "rating",
+	},
 };
 
-export const counterSlice = createSlice({
-	name: "counter", // название склада
-	initialState, // первое состояние нашего слайса
+const filterSlice = createSlice({
+	name: "filters",
+	initialState,
 	reducers: {
-		// сделай 3 функции
-		increment: (state) => {
-			state.value += 1;
+		// сохранять id нашей категории при вызове dispatch получит state и действие action с определенным типом этот тип содержит в себе какую-то команду
+		// в стейт мы сохраняем то, что придет в action.payload придет объект, который будет содержать обязательно любой action содержит в себе type - какую-то команду и любую еще другую информацию которая обычно хранится в payload
+		setCategoryId(state, action) {
+			state.categoryId = action.payload;
 		},
-		decrement: (state) => {
-			state.value -= 1;
-		},
-		incrementByAmount: (state, action) => {
-			state.value += action.payload;
+		setSort(state, action) {
+			state.sort = action.payload;
 		},
 	},
 });
 
-// Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { setCategoryId, setSort } = filterSlice.actions;
 
-export default counterSlice.reducer;
+export default filterSlice.reducer;
