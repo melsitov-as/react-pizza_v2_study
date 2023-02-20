@@ -7,11 +7,15 @@ import PizzaBlock from "../components/PizzaBlock";
 import Pagination from "../components/Pagination";
 import { SearchContext } from "../App";
 import { setCategoryId } from "../redux/slices/filterSlice";
+import axios from "axios";
 
 const Home = () => {
 	const dispatch = useDispatch();
-	const categoryId = useSelector((state) => state.filter.categoryId);
-	const sortType = useSelector((state) => state.filter.sort.sortProperty);
+	// const categoryId = useSelector((state) => state.filter.categoryId);
+	// const sortType = useSelector((state) => state.filter.sort.sortProperty);
+
+	const { categoryId, sort } = useSelector((state) => state.filter);
+	const sortType = sort.sortProperty;
 
 	const onChangeCategory = (id) => {
 		dispatch(setCategoryId(id));
@@ -28,18 +32,15 @@ const Home = () => {
 		const order = sortType.includes("-") ? "asc" : "desc";
 		const search = searchValue ? `&search=${searchValue}` : "";
 
-		fetch(
-			`https://62d467c6cd960e45d457c0a7.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}${search}`
-		)
+		axios
+			.get(
+				`https://62d467c6cd960e45d457c0a7.mockapi.io/items?page=${currentPage}&limit=4${category}&sortBy=${sortBy}&order=${order}${search}`
+			)
 			.then((res) => {
-				return res.json();
-			})
-			.then((arr) => {
-				setItems(arr);
+				setItems(res.data);
 				setIsLoading(false);
 			});
 		window.scrollTo(0, 0);
-		// следи за переменной categoryId, если она поменяется в этом случае делай запрос на бекенд
 	}, [categoryId, sortType, searchValue, currentPage]);
 
 	const skeletons = [...new Array(6)].map((item, index) => (
