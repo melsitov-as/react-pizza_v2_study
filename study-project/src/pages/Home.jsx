@@ -104,7 +104,7 @@ const Home = () => {
 	));
 
 	const pizzas = items.map((obj, index) => (
-		<PizzaBlock key={index} {...obj} />
+		<PizzaBlock key={obj.id} {...obj} />
 	));
 
 	return (

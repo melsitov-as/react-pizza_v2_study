@@ -29,7 +29,6 @@ const filterSlice = createSlice({
 			state.sort = action.payload.sort;
 			state.currentPage = Number(action.payload.currentPage);
 			state.categoryId = Number(action.payload.categoryId);
-			console.log("setFilters-state", state.sort);
 		},
 	},
 });
