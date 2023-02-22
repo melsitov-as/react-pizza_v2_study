@@ -21,6 +21,7 @@ import axios from "axios";
 import qs from "qs";
 import { useNavigate } from "react-router-dom";
 import { sortList } from "../components/Sort";
+import { fetchPizzas } from "../redux/slices/pizzaSlice";
 
 const Home = () => {
 	const navigate = useNavigate();
@@ -42,8 +43,8 @@ const Home = () => {
 	};
 
 	const { searchValue } = useContext(SearchContext);
-	const [items, setItems] = useState([]);
-	const [isLoading, setIsLoading] = useState(true);
+	const { items, status } = useSelector((state) => state.pizza);
+	// const [items, setItems] = useState([]);
 
 	// Если был первый рендер, то проверяем URL-параметры и сохраняем в redux
 	useEffect(() => {
@@ -71,33 +72,59 @@ const Home = () => {
 		isMounted.current = true;
 	}, [categoryId, sort.sortProperty, currentPage]);
 
-	const fetchPizzas = () => {
-		setIsLoading(true);
+	const getPizzas = async () => {
+		// setIsLoading(true);
 
 		const category = categoryId > 0 ? `category=${categoryId}` : "";
 		const sortBy = sortType.replace("-", "");
 		const order = sortType.includes("-") ? "asc" : "desc";
 		const search = searchValue ? `&search=${searchValue}` : "";
 
-		axios
-			.get(
-				`https://62d467c6cd960e45d457c0a7.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
-			)
-			.then((res) => {
-				setItems(res.data);
-				setIsLoading(false);
-			});
+		// await axios
+		// 	.get(
+		// 		`https://62d467c6cd960e45d457c0a7.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
+		// 	)
+		// 	.then((res) => {
+		// 		dispatch(setItems(res.data));
+		// 		setIsLoading(false);
+		// 	});
+		// try {
+		// 	const res = await axios.get(
+		// 		`https://62d467c6cd960e45d457c0a7.mockapi.io/items?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
+		// 	);
+		// 	dispatch(setItems(res.data));
+		// } catch (error) {
+		// 	console.log("ERROR", error);
+		// } finally {
+		// 	setIsLoading(false);
+		// }
+		try {
+			dispatch(
+				fetchPizzas({
+					category,
+					sortBy,
+					order,
+					search,
+					currentPage,
+				})
+			); // одной функцией сделать запрос на бэкенд и сразу же сохранить все пиццы
+		} catch (error) {
+			console.log("ERROR", error);
+		} finally {
+			// setIsLoading(false);
+		}
 	};
 
 	// Если был первый рендер, то запрашиваем пиццы
 	useEffect(() => {
 		window.scrollTo(0, 0);
-		if (!isSearch.current) {
-			fetchPizzas();
-		}
+		getPizzas();
+		// if (!isSearch.current) {
+		// }
 
 		isSearch.current = false;
-	}, [categoryId, sort.sortProperty, searchValue, currentPage]);
+	}, []);
+	// }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
 	const skeletons = [...new Array(6)].map((item, index) => (
 		<Skeleton key={index} />
@@ -117,9 +144,22 @@ const Home = () => {
 				<Sort />
 			</div>
 			<h2 className="content__title">Все пиццы</h2>
-			<div className="content__items">
-				{isLoading ? skeletons : pizzas}
-			</div>
+			{status === "error" ? (
+				<div className="content__error-info">
+					<h2>Произошла ошибка! 😕</h2>
+					<p>
+						К сожалению, не удалось получить питсы. Попробуйте
+						повторить попытку позже
+					</p>
+				</div>
+			) : (
+				<div className="content__items">
+					{status === "loading" ? skeletons : pizzas}
+				</div>
+			)}
+			{/* <div className="content__items">
+				{status === "loading" ? skeletons : pizzas}
+			</div> */}
 			<Pagination currentPage={currentPage} onChangePage={onChangePage} />
 		</>
 	);
