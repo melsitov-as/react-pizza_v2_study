@@ -19,7 +19,7 @@ import {
 } from "../redux/slices/filterSlice";
 import axios from "axios";
 import qs from "qs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { sortList } from "../components/Sort";
 import { fetchPizzas } from "../redux/slices/pizzaSlice";
 
@@ -131,7 +131,9 @@ const Home = () => {
 	));
 
 	const pizzas = items.map((obj, index) => (
-		<PizzaBlock key={obj.id} {...obj} />
+		<Link to={`pizza/${obj.id}`} key={obj.id}>
+			<PizzaBlock {...obj} />
+		</Link>
 	));
 
 	return (
