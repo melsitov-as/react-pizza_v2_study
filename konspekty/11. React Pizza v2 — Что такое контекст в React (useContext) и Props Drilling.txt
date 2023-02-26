@@ -1,0 +1,12 @@
+createContext
+React.createContext
+
+почти как useState, только если useState возвращает значение и метод изменения стейта то creacteContext это не возвращает
+
+SearchContext - это не компонет
+.Provider - это компонент
+
+хук useContext
+const value = useContext(MyContext)
+
+useContext создает обработчик события на изменение нашего контекста он слушает изменения контекста если контекст изменился компонент перерисуется и вернутся новые
